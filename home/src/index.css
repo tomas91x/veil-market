@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  font-family: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #0f172a;
+  background-color: #f3efe6;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top right, rgba(250, 222, 196, 0.65), transparent 55%),
+    radial-gradient(circle at 20% 20%, rgba(180, 220, 230, 0.6), transparent 50%),
+    linear-gradient(135deg, #f7f2ea 0%, #f0f5f1 60%, #f7efe3 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
