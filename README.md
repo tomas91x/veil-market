@@ -1,110 +1,135 @@
-# FHEVM Hardhat Template
+# Veil Market
 
-A Hardhat-based template for developing Fully Homomorphic Encryption (FHE) enabled Solidity smart contracts using the
-FHEVM protocol by Zama.
+Veil Market is a privacy-forward swap dApp built on Zama's FHEVM. It lets users swap ETH for fZama at a fixed
+exchange rate (1 ETH = 800 fZama) while keeping balances encrypted on-chain. The frontend displays encrypted
+balances by default and reveals the plaintext only when the user explicitly requests decryption.
 
-## Quick Start
+## Project Goals
 
-For detailed instructions see:
-[FHEVM Hardhat Quick Start Tutorial](https://docs.zama.ai/protocol/solidity-guides/getting-started/quick-start-tutorial)
+- Provide a simple, fixed-rate ETH → fZama swap experience.
+- Keep on-chain balances encrypted and only reveal plaintext on user demand.
+- Demonstrate an end-to-end FHEVM workflow with clear, production-like structure.
+
+## Key Features
+
+- Fixed-rate swap: 1 ETH = 800 fZama.
+- Encrypted balances stored on-chain; decrypt on demand in the UI.
+- Clear separation of contract logic, deployment scripts, tasks, and tests.
+- Frontend reads via `viem` and writes via `ethers` (explicitly enforced).
+
+## Problems Solved
+
+- **Privacy of balances**: balances remain encrypted on-chain, reducing exposure of user holdings.
+- **Predictable pricing**: fixed rate removes slippage and pricing ambiguity.
+- **User clarity**: encrypted-by-default UI makes privacy the default behavior.
+
+## Advantages
+
+- Strong privacy posture with FHE-based balance management.
+- Simple fixed-rate model is easy to understand and test.
+- Minimal, transparent architecture: contracts, tasks, tests, and frontend are clearly separated.
+- No reliance on localstorage or environment variables in the frontend.
+
+## Tech Stack
+
+- **Smart Contracts**: Solidity + Hardhat + Zama FHEVM libraries
+- **Frontend**: React + Vite + RainbowKit
+- **Chain Access**: `viem` for reads, `ethers` for writes
+- **Package Manager**: npm
+- **No Tailwind**: styling is done without Tailwind utilities
+
+## Repository Layout
+
+```
+contracts/   # Swap contract and related FHE logic
+deploy/      # Deployment scripts for local + Sepolia
+tasks/       # Hardhat tasks
+test/        # Contract tests
+home/        # React + Vite frontend
+```
+
+## Getting Started
 
 ### Prerequisites
 
-- **Node.js**: Version 20 or higher
-- **npm or yarn/pnpm**: Package manager
+- Node.js 20+
+- npm
 
-### Installation
+### Install Dependencies
 
-1. **Install dependencies**
-
-   ```bash
-   npm install
-   ```
-
-2. **Set up environment variables**
-
-   ```bash
-   npx hardhat vars set MNEMONIC
-
-   # Set your Infura API key for network access
-   npx hardhat vars set INFURA_API_KEY
-
-   # Optional: Set Etherscan API key for contract verification
-   npx hardhat vars set ETHERSCAN_API_KEY
-   ```
-
-3. **Compile and test**
-
-   ```bash
-   npm run compile
-   npm run test
-   ```
-
-4. **Deploy to local network**
-
-   ```bash
-   # Start a local FHEVM-ready node
-   npx hardhat node
-   # Deploy to local network
-   npx hardhat deploy --network localhost
-   ```
-
-5. **Deploy to Sepolia Testnet**
-
-   ```bash
-   # Deploy to Sepolia
-   npx hardhat deploy --network sepolia
-   # Verify contract on Etherscan
-   npx hardhat verify --network sepolia <CONTRACT_ADDRESS>
-   ```
-
-6. **Test on Sepolia Testnet**
-
-   ```bash
-   # Once deployed, you can run a simple test on Sepolia.
-   npx hardhat test --network sepolia
-   ```
-
-## 📁 Project Structure
-
-```
-fhevm-hardhat-template/
-├── contracts/           # Smart contract source files
-│   └── FHECounter.sol   # Example FHE counter contract
-├── deploy/              # Deployment scripts
-├── tasks/               # Hardhat custom tasks
-├── test/                # Test files
-├── hardhat.config.ts    # Hardhat configuration
-└── package.json         # Dependencies and scripts
+```bash
+npm install
 ```
 
-## 📜 Available Scripts
+### Environment Configuration (Hardhat)
 
-| Script             | Description              |
-| ------------------ | ------------------------ |
-| `npm run compile`  | Compile all contracts    |
-| `npm run test`     | Run all tests            |
-| `npm run coverage` | Generate coverage report |
-| `npm run lint`     | Run linting checks       |
-| `npm run clean`    | Clean build artifacts    |
+Create a `.env` in the project root with the following values:
 
-## 📚 Documentation
+```
+INFURA_API_KEY=your_infura_api_key
+PRIVATE_KEY=your_deployer_private_key
+```
 
-- [FHEVM Documentation](https://docs.zama.ai/fhevm)
-- [FHEVM Hardhat Setup Guide](https://docs.zama.ai/protocol/solidity-guides/getting-started/setup)
-- [FHEVM Testing Guide](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat/write_test)
-- [FHEVM Hardhat Plugin](https://docs.zama.ai/protocol/solidity-guides/development-guide/hardhat)
+Notes:
+- The deployment uses a **private key** and **never** a mnemonic.
+- The frontend does **not** read environment variables.
 
-## 📄 License
+### Compile
 
-This project is licensed under the BSD-3-Clause-Clear License. See the [LICENSE](LICENSE) file for details.
+```bash
+npm run compile
+```
 
-## 🆘 Support
+### Run Tests
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/zama-ai/fhevm/issues)
-- **Documentation**: [FHEVM Docs](https://docs.zama.ai)
-- **Community**: [Zama Discord](https://discord.gg/zama)
+```bash
+npm run test
+```
 
----
+### Local Development Node
 
-**Built with ❤️ by the Zama team**
+```bash
+npx hardhat node
+```
+
+### Deploy Locally
+
+```bash
+npx hardhat deploy --network localhost
+```
+
+This is for local contract development and testing. The frontend should not be configured to use localhost.
+
+### Deploy to Sepolia
+
+```bash
+npx hardhat deploy --network sepolia
+```
+
+### Frontend (Vite)
+
+```bash
+cd home
+npm install
+npm run dev
+```
+
+Notes:
+- The UI uses encrypted balances by default and only decrypts on user action.
+- The app is expected to connect to Sepolia (no localhost network).
+
+## ABI Source of Truth
+
+The frontend must consume the ABI generated by the contracts and stored in `deployments/sepolia`.
+
+## Future Roadmap
+
+- Add multi-asset support beyond fZama with configurable fixed rates.
+- Introduce rate governance and time-based rate updates.
+- Add advanced privacy UX (batch decrypt, selective reveal, exportable proofs).
+- Expand test coverage for edge cases (insufficient liquidity, rate boundary cases).
+- Optional: integrate a public status page for deployment metadata.
+
+## License
+
+BSD-3-Clause-Clear (see `LICENSE`).
